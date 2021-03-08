@@ -29,7 +29,6 @@ def sample_recipe(name='Sample Recipe', description='Insert Description Here'):
 
 class RecipeApiTests(TestCase):
     """Test unauthenticated recipe API access"""
-
     def setUp(self):
         self.client = APIClient()
 

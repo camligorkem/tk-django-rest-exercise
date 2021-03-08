@@ -25,8 +25,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         for ing in ingredients:
             Ingredient.objects.get_or_create(recipe=recipe, **ing)
-        recipe.save()
-        recipe.refresh_from_db()
         return recipe
 
     def update(self, instance, validated_data):

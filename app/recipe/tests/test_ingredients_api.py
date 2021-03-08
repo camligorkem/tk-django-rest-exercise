@@ -15,25 +15,30 @@ INGREDIENTS_URL = reverse('recipe:ingredient-list')
 class IngredientsApiTests(TestCase):
     """Tests ingredients api"""
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(self):
         self.client = APIClient()
 
     def test_retrieve_ingredient_list(self):
         """Test retrieving a list of the ingredients"""
-        Ingredient.objects.create(name='Kale')
-        Ingredient.objects.create(name='Salt')
+        ing1 = Ingredient.objects.create(name='Kale')
+        ing2 = Ingredient.objects.create(name='Salt')
 
         res = self.client.get(INGREDIENTS_URL)
 
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(ing1.name, res.data[0]['name'])
+        self.assertIn(ing2.name, res.data[1]['name'])
+
         ingredients = Ingredient.objects.all()
         serializer = IngredientSerializer(ingredients, many=True)
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
     def test_create_ingredient_successful(self):
         """Test create a new ingredient"""
         payload = {'name': 'Cabbage'}
+        qs = Ingredient.objects.filter(name="Cabbage")
+        self.assertFalse(qs.exists())
         self.client.post(INGREDIENTS_URL, payload)
 
         exists = Ingredient.objects.filter(
